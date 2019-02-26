@@ -1,0 +1,14 @@
+[Unit]
+Description=gmedia restart depending services
+PartOf=gmedia.service
+After=media-xfiles-media.mount
+
+[Service]
+Type=oneshot
+ExecStart=/home/joel/majo/restart_plex
+RemainAfterExit=yes
+User=root
+Group=root
+
+[Install]
+WantedBy=gmedia.service

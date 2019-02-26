@@ -1,0 +1,14 @@
+[Unit]
+Description=gmedia find
+PartOf=gmedia.service
+After=media-xfiles-media.mount
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rclone --timeout 1h rc vfs/refresh recursive=true
+RemainAfterExit=yes
+User=root
+Group=root
+
+[Install]
+WantedBy=gmedia.service

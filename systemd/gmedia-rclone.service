@@ -1,0 +1,34 @@
+[Unit]
+Description=RClone Service
+PartOf=gmedia.service
+RequiresMountsFor=/media/xfiles/mergerfs
+#Requires=systemd-networkd.service
+#Wants=network-online.target
+#After=network-online.target
+
+[Service]
+Type=notify
+Environment=RCLONE_CONFIG=/root/.config/rclone/rclone.conf 
+ExecStart=/usr/bin/rclone mount gcrypt: /media/xfiles/mergerfs/remote \
+   --allow-other \
+   --allow-non-empty \
+   --buffer-size 256M \
+   --dir-cache-time 72h \
+   --drive-chunk-size 32M \
+   --uid 911 \
+   --gid 911 \
+   --umask 002 \
+   --timeout 1h \
+   --vfs-read-chunk-size 128M \
+   --vfs-read-chunk-size-limit off \
+   --rc \
+   --log-level INFO \
+   --log-file /var/log/rclone.log
+ExecStop=/usr/bin/sudo /bin/umount -lf /media/xfiles/mergerfs/remote
+Restart=on-failure
+RestartSec=5
+User=root
+Group=root
+
+[Install]
+WantedBy=gmedia.service
