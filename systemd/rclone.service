@@ -1,0 +1,32 @@
+[Unit]
+Description=RClone Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=notify
+Environment=RCLONE_CONFIG=/root/.config/rclone/rclone.conf
+KillMode=none
+RestartSec=5
+ExecStart=/usr/bin/rclone mount gcrypt: /media/xfiles/mergerfs/remote \
+--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36" \
+--allow-other \
+--use-mmap \
+--uid 911 \
+--gid 911 \
+--dir-cache-time 1000h \
+--log-level INFO \
+--log-file /var/log/rclone.log \
+--poll-interval 15s \
+--umask 002 \
+--rc \
+--rc-addr :5572 \
+--vfs-read-chunk-size 32M
+ExecStop=/bin/fusermount -uz gcrypt: /media/xfiles/mergerfs/remote
+ExecStartPost=/usr/bin/rclone rc vfs/refresh recursive=true --rc-addr 127.0.0.1:5572 _async=true
+Restart=on-failure
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
